@@ -1,0 +1,7 @@
+HowTomcatWorks/
+src/.idea/
+src/HowTomcatWorks.iml
+src/ex01/pyrmont/HttpServer.class
+src/ex01/pyrmont/Request.class
+src/ex01/pyrmont/Response.class
+src/out/
