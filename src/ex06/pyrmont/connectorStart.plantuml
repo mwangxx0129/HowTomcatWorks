@@ -1,0 +1,34 @@
+@startuml
+
+group "main thread"
+Bootstrap-> HttpConnector:  start
+HttpConnector -> HttpConnector: create background Connector thread
+loop 10 time
+HttpConnector -> HttpProcessor: new and start the HttpProcessor thread
+HttpProcessor -> HttpConnector: return
+HttpConnector -> HttpProcessorPool: recycle returned Processor
+end
+end
+
+group "HttpConnector[8080]"
+HttpConnector -> HttpConnector : wait TCP/IP connection
+HttpConnector-> HttpConnector: pick up HttpProcessor from pool
+HttpConnector-> HttpProcessor: assign TCP/IP socket to HttpProcessor
+end
+
+group "HttpProcessor[8080][01]"
+HttpProcessor -> HttpProcessor: await TCP/IP socket
+HttpProcessor -> HttpProcessor: Read Http requestLine, parse the socket based on protocol version
+HttpProcessor -> Container: invoke
+Container -> HttpProcessor: return
+HttpProcessor -> HttpProcessorPool: recycle the HttpProcessor after processing socket
+
+end
+
+
+group "main thread"
+context -> lifecycleComponent: input any key to stop context recursively
+end
+
+
+@enduml
